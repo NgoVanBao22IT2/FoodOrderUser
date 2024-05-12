@@ -4,6 +4,7 @@ package com.breens.orderfood.di
 import com.breens.orderfood.data.repositories.Repository
 import com.breens.orderfood.data.repositories.RepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -25,11 +26,13 @@ object RepositoryModule {
     fun provideNoteRepository(
         firebaseFirestore: FirebaseFirestore,
         firebaseAuth: FirebaseAuth,
+        firebaseDatabase: FirebaseDatabase,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): Repository {
         return RepositoryImpl(
             foodDB = firebaseFirestore,
             firebaseAuth = firebaseAuth,
+            firebaseDatabase = firebaseDatabase,
             ioDispatcher = ioDispatcher,
         )
     }

@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import com.breens.orderfood.data.model.Banner
 import com.breens.orderfood.data.model.Card
 import com.breens.orderfood.data.model.Cate
+import com.breens.orderfood.data.model.Chat
 import com.breens.orderfood.data.model.Order
 import com.breens.orderfood.data.model.Task
 import com.breens.orderfood.data.model.User
@@ -78,6 +79,7 @@ data class OrderScreenUiState(
     val statusToBeUpdated: Order? = null,
     val errorMessage: String? = null,
     val currentCode: String = "",
+    val currentUserID: String = "",
     val currentTitle: String = "",
     val currentAddressOrder: String = "",
     val currentQuantityOrder:Int = 0,
@@ -91,10 +93,23 @@ data class OrderScreenUiState(
     var selectedOptionAddress : String = optionsAddress[0],
     var valueChange : Int = 1,
     var valueCart : Int = 0,
-    var value : Int = 1
+    var value : Int = 1,
+    val isShowDialog: Boolean = false,
 
 )
 val optionsAddress = listOf("FPT Plaza2, đường Trần Quốc Vượng, phường Hòa Hải", "Kí túc xá VKU, đường Nam kì Khởi Nghĩa, phường Hòa Hải")
 val optionsPayment = listOf("Thanh toán khi nhận hàng" ,"Thanh toán qua ví điện tử")
+data class ChatScreenUiState(
+    val isLoading: Boolean = false,
+    val messages: List<Chat> = emptyList(),
+    val errorMessage: String? = null,
+    val currentMessage: String = "",
+    val currentSenderID: String = "",
+    val currentReceiveID: String = "",
+    val direction: Boolean = false,
+    var imgUrl: String = "",
+    var bitmap: Bitmap? = null,
 
+
+    )
 

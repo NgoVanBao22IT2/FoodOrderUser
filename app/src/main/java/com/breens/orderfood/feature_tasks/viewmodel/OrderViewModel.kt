@@ -6,8 +6,10 @@ import com.breens.orderfood.common.Result
 import com.breens.orderfood.data.model.Order
 import com.breens.orderfood.data.repositories.Repository
 import com.breens.orderfood.feature_tasks.events.OrderScreenUiEvent
+import com.breens.orderfood.feature_tasks.events.SignInScreenUiEvent
 import com.breens.orderfood.feature_tasks.side_effects.OrderScreenSideEffects
 import com.breens.orderfood.feature_tasks.state.OrderScreenUiState
+import com.breens.orderfood.feature_tasks.state.SignInScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,16 +53,16 @@ class OrderViewModel @Inject constructor(private val orderRepository: Repository
     private fun reduce(oldStateOrder: OrderScreenUiState, event: OrderScreenUiEvent) {
         when (event) {
             is OrderScreenUiEvent.AddOrder -> {
-                addOrder(oldStateOrder = oldStateOrder, code = event.code, address = event.address, imageOrder = event.imageOrder, titleOrder = event.titleOrder, price = event.price, quantity = event.quantity, paymentMethods = event.paymentMethods,total= event.total)
+                addOrder(oldStateOrder = oldStateOrder, userID = event.userID, code = event.code, address = event.address, imageOrder = event.imageOrder, titleOrder = event.titleOrder, price = event.price, quantity = event.quantity, paymentMethods = event.paymentMethods,total= event.total)
             }
 
-            is OrderScreenUiEvent.AddOrder -> {
-                addOrder(oldStateOrder = oldStateOrder, code = event.code, address = event.address, imageOrder = event.imageOrder, titleOrder = event.titleOrder, price = event.price, quantity = event.quantity, paymentMethods = event.paymentMethods,total= event.total)
-            }
 
 
             OrderScreenUiEvent.GetOrder -> {
                 getOrder(oldStateOrder = oldStateOrder)
+            }
+            is OrderScreenUiEvent.OnChangeUserID-> {
+                onChangeUserID(oldStateOrder = oldStateOrder, userID = event.userID)
             }
 
             is OrderScreenUiEvent.OnChangeFoodCode-> {
@@ -101,17 +103,20 @@ class OrderViewModel @Inject constructor(private val orderRepository: Repository
             OrderScreenUiEvent.UpdateNote -> {
                 updateNote(oldStateOrder = oldStateOrder)
             }
+            is OrderScreenUiEvent.OnChangeDialogState -> {
+                onChangeDialog(oldStateOrder = oldStateOrder, isShown = event.show)
+            }
 
         }
     }
 
 
 
-    private fun addOrder(code:String, address: String, imageOrder: String,titleOrder: String,price: Int, quantity: Int, paymentMethods: String,total: Int, oldStateOrder: OrderScreenUiState) {
+    private fun addOrder(userID:String, code:String, address: String, imageOrder: String,titleOrder: String,price: Int, quantity: Int, paymentMethods: String,total: Int, oldStateOrder: OrderScreenUiState) {
         viewModelScope.launch {
             setState(oldStateOrder.copy(isLoading = true))
 
-            when (val resultOrder = orderRepository.addOrder(code = code, address = address, imageOrder = imageOrder, titleOrder = titleOrder, price = price , quantity = quantity, paymentMethods = paymentMethods,total= total)) {
+            when (val resultOrder = orderRepository.addOrder(userID = userID, code = code, address = address, imageOrder = imageOrder, titleOrder = titleOrder, price = price , quantity = quantity, paymentMethods = paymentMethods,total= total)) {
                 is Result.Failure -> {
                     setState(oldStateOrder.copy(isLoading = false))
 
@@ -163,6 +168,7 @@ class OrderViewModel @Inject constructor(private val orderRepository: Repository
     private fun updateNote(oldStateOrder: OrderScreenUiState) {
         viewModelScope.launch {
             setState(oldStateOrder.copy(isLoading = true))
+            val userID = oldStateOrder.currentUserID
             val code = oldStateOrder.currentCode
             val imageOrder = oldStateOrder.imgUrlOrder
             val title = oldStateOrder.currentTitle
@@ -176,6 +182,7 @@ class OrderViewModel @Inject constructor(private val orderRepository: Repository
 
             when (
                 val result = orderRepository.updateStatus(
+                    userID = userID,
                     code = code,
                     imageOrder = imageOrder,
                     titleOrder = title,
@@ -212,6 +219,9 @@ class OrderViewModel @Inject constructor(private val orderRepository: Repository
             }
         }
     }
+    private fun onChangeUserID(oldStateOrder: OrderScreenUiState, userID: String) {
+        setState(oldStateOrder.copy(currentUserID = userID))
+    }
     private fun onChangeFoodCode(oldStateOrder: OrderScreenUiState, code: String) {
         setState(oldStateOrder.copy(currentCode = code))
     }
@@ -246,5 +256,8 @@ class OrderViewModel @Inject constructor(private val orderRepository: Repository
     }
     private fun setStatusToBeUpdated(oldStateOrder: OrderScreenUiState, order: Order) {
         setState(oldStateOrder.copy(statusToBeUpdated = order))
+    }
+    private fun onChangeDialog(oldStateOrder: OrderScreenUiState, isShown: Boolean) {
+        setState(oldStateOrder.copy(isShowDialog = isShown))
     }
 }

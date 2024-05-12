@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FoodUser</string>
+    <string name="type_message">Type Message</string>
+    <string name="online">Online</string>
 </resources>

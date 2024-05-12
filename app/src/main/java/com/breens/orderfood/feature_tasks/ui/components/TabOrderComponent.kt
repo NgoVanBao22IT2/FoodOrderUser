@@ -50,6 +50,7 @@ import com.breens.orderfood.R
 import com.breens.orderfood.data.model.Order
 import com.breens.orderfood.data.model.TabItemsOrder
 import com.breens.orderfood.feature_tasks.state.OrderScreenUiState
+import com.breens.orderfood.feature_tasks.state.SignInScreenUiState
 import com.breens.orderfood.theme.Green
 import java.text.DecimalFormat
 
@@ -57,6 +58,7 @@ import java.text.DecimalFormat
 @Composable
 fun TabOrderComponent(
     navControllerNotes: NavController,
+    uiStateAccount: SignInScreenUiState,
     uiStateOrder: OrderScreenUiState,
     updateStatus: (Order) -> Unit,
     setOrderAddress:(String)->Unit,
@@ -96,6 +98,17 @@ fun TabOrderComponent(
     }
     val pagerStateOrder = rememberPagerState {
         tabItemsOrder.size
+    }
+    var userID by remember {
+        mutableStateOf("")
+    }
+    LazyColumn(contentPadding = PaddingValues(12.dp)){
+        items(uiStateAccount.accounts.size) { indexAccount ->
+
+            userID = uiStateAccount.accounts[indexAccount].userID
+
+
+        }
     }
     LaunchedEffect(selectedTabIndexOrder){
         pagerStateOrder.animateScrollToPage(selectedTabIndexOrder)
@@ -163,493 +176,516 @@ fun TabOrderComponent(
                 ) {
                     composable(route = tabItemsOrder[page].id.toString()) {
                         when (tabItemsOrder[page].id) {
-                            1 -> LazyColumn(contentPadding = PaddingValues(12.dp)) {
-                                items(uiStateOrder.orders.size) { index ->
-                                    if(uiStateOrder.orders[index].status == "0"){
-                                        Column {
-                                            Column(
 
-                                                verticalArrangement = Arrangement.Center,
-                                                horizontalAlignment = Alignment.CenterHorizontally
-                                            ) {
-                                                setOrderAddress(uiStateOrder.orders[index].address)
-                                                setOrderPayment(uiStateOrder.orders[index].paymentMethods)
-                                                setOrderTitle(uiStateOrder.orders[index].titleOrder)
-                                                setOrderImage(uiStateOrder.orders[index].imageOrder)
-                                                setOrderPrice(uiStateOrder.orders[index].price)
-                                                setOrderQuantity(uiStateOrder.orders[index].quantity)
-                                                setOrderTotal(uiStateOrder.orders[index].total)
+                                1 -> LazyColumn(contentPadding = PaddingValues(12.dp)) {
+                                   items(uiStateOrder.orders.size) { index ->
+                                       if( uiStateOrder.orders[index].userID == userID) {
+                                           if(uiStateOrder.orders[index].status == "0"){
+                                               Column {
+                                                   Column(
 
-                                                Row(
+                                                       verticalArrangement = Arrangement.Center,
+                                                       horizontalAlignment = Alignment.CenterHorizontally
+                                                   ) {
+                                                       setOrderAddress(uiStateOrder.orders[index].address)
+                                                       setOrderPayment(uiStateOrder.orders[index].paymentMethods)
+                                                       setOrderTitle(uiStateOrder.orders[index].titleOrder)
+                                                       setOrderImage(uiStateOrder.orders[index].imageOrder)
+                                                       setOrderPrice(uiStateOrder.orders[index].price)
+                                                       setOrderQuantity(uiStateOrder.orders[index].quantity)
+                                                       setOrderTotal(uiStateOrder.orders[index].total)
 
-                                                    verticalAlignment = Alignment.CenterVertically,
+                                                       Row(
 
-                                                    modifier = Modifier.padding(12.dp),
-                                                ) {
-                                                    Image(
-                                                        painter = rememberImagePainter(uiStateOrder.orders[index].imageOrder),
-                                                        contentDescription = "Food Image",
-                                                        contentScale = ContentScale.FillBounds,
-                                                        modifier = Modifier
-                                                            .size(width = 100.dp, height = 90.dp)
-                                                            .padding(end = 10.dp)
-                                                            .border(
-                                                                width = 1.dp,
-                                                                color = Color.White,
-                                                                shape = RoundedCornerShape(15.dp)
-                                                            )
-                                                            .clip(RoundedCornerShape(15.dp))
-                                                    )
-                                                    Spacer(modifier = Modifier.width(15.dp))
-                                                    Column(
+                                                           verticalAlignment = Alignment.CenterVertically,
 
-                                                        modifier = Modifier.weight(0.7f),
-                                                    ) {
-                                                        Text(
-                                                            text = uiStateOrder.orders[index].titleOrder,
-                                                            color = Color.Black,
-                                                            fontSize = 20.sp,
-                                                            fontWeight = FontWeight.Bold
-                                                        )
+                                                           modifier = Modifier.padding(12.dp),
+                                                       ) {
+                                                           Image(
+                                                               painter = rememberImagePainter(uiStateOrder.orders[index].imageOrder),
+                                                               contentDescription = "Food Image",
+                                                               contentScale = ContentScale.FillBounds,
+                                                               modifier = Modifier
+                                                                   .size(width = 100.dp, height = 90.dp)
+                                                                   .padding(end = 10.dp)
+                                                                   .border(
+                                                                       width = 1.dp,
+                                                                       color = Color.White,
+                                                                       shape = RoundedCornerShape(15.dp)
+                                                                   )
+                                                                   .clip(RoundedCornerShape(15.dp))
+                                                           )
+                                                           Spacer(modifier = Modifier.width(15.dp))
+                                                           Column(
 
-                                                        Row(
-                                                            modifier = Modifier.padding(top=15.dp)
-                                                        ) {
-                                                            androidx.compose.material.Icon(
-                                                                painter = painterResource(id = R.drawable.baseline_location_on_24),
-                                                                contentDescription = "Movie Image",
-                                                                modifier = Modifier
-                                                                    .size(40.dp)
-                                                                    .padding(end = 10.dp)
-                                                                    .border(
-                                                                        width = 1.dp,
-                                                                        color = Color.White,
-                                                                        shape = RoundedCornerShape(
-                                                                            50.dp
-                                                                        )
-                                                                    )
-                                                                    .clip(RoundedCornerShape(50.dp)),
-                                                                tint = Color.Red
+                                                               modifier = Modifier.weight(0.7f),
+                                                           ) {
+                                                               Text(
+                                                                   text = uiStateOrder.orders[index].titleOrder,
+                                                                   color = Color.Black,
+                                                                   fontSize = 20.sp,
+                                                                   fontWeight = FontWeight.Bold
+                                                               )
 
-                                                            )
-                                                            Text(
-                                                                text = uiStateOrder.orders[index].address,
-                                                                color = Color.Black,
-                                                                fontSize = 13.sp,
-                                                            )
+                                                               Row(
+                                                                   modifier = Modifier.padding(top=15.dp)
+                                                               ) {
+                                                                   androidx.compose.material.Icon(
+                                                                       painter = painterResource(id = R.drawable.baseline_location_on_24),
+                                                                       contentDescription = "Movie Image",
+                                                                       modifier = Modifier
+                                                                           .size(40.dp)
+                                                                           .padding(end = 10.dp)
+                                                                           .border(
+                                                                               width = 1.dp,
+                                                                               color = Color.White,
+                                                                               shape = RoundedCornerShape(
+                                                                                   50.dp
+                                                                               )
+                                                                           )
+                                                                           .clip(RoundedCornerShape(50.dp)),
+                                                                       tint = Color.Red
 
-
-
-                                                        }
-                                                        Spacer(modifier = Modifier.height(2.dp))
-                                                        Text(
-                                                            text = "${DecimalFormat("#,###").format(uiStateOrder.orders[index].total)}đ",
-                                                            color = Color.Red,
-                                                            fontSize = 22.sp,
-                                                            fontWeight = FontWeight.Bold
-                                                        )
-                                                        Spacer(modifier = Modifier.height(2.dp))
-                                                    }
+                                                                   )
+                                                                   Text(
+                                                                       text = uiStateOrder.orders[index].address,
+                                                                       color = Color.Black,
+                                                                       fontSize = 13.sp,
+                                                                   )
 
 
-                                                }
-                                                Spacer(modifier = Modifier.height(10.dp))
-                                                Row()
-                                                {
-                                                    Button(
-                                                        onClick = {
-                                                            updateStatus(uiStateOrder.orders[index])
-                                                            setOrderStatus("3")
-                                                            saveStatus()
-                                                        },
-                                                        colors = ButtonDefaults.buttonColors(Color.White),
-                                                        modifier = Modifier
 
-                                                            .border(
-                                                                width = 2.dp,
-                                                                color = Color.LightGray,
-                                                                shape = RoundedCornerShape(30.dp)
-                                                            )
-                                                            .height(45.dp)
-                                                            .padding(horizontal = 12.dp)
-                                                    ) {
-                                                        Text(
-                                                            text = "Hủy đơn",
-                                                            color = Color.Black
-                                                        )
+                                                               }
+                                                               Spacer(modifier = Modifier.height(2.dp))
+                                                               Text(
+                                                                   text = "${DecimalFormat("#,###").format(uiStateOrder.orders[index].total)}đ",
+                                                                   color = Color.Red,
+                                                                   fontSize = 22.sp,
+                                                                   fontWeight = FontWeight.Bold
+                                                               )
+                                                               Spacer(modifier = Modifier.height(2.dp))
+                                                           }
 
-                                                    }
-                                                    Button(
-                                                        onClick = { /*TODO*/ },
-                                                        colors = ButtonDefaults.buttonColors(Green),
-                                                        modifier = Modifier
 
-                                                            .clip(RoundedCornerShape(30.dp))
-                                                            .height(45.dp)
-                                                            .padding(horizontal = 12.dp)
-                                                    ) {
-                                                        Text(
-                                                            text = "Xem chi tiết",
+                                                       }
+                                                       Spacer(modifier = Modifier.height(10.dp))
+                                                       Row()
+                                                       {
+                                                           Button(
+                                                               onClick = {
+                                                                   updateStatus(uiStateOrder.orders[index])
+                                                                   setOrderStatus("3")
+                                                                   saveStatus()
+                                                               },
+                                                               colors = ButtonDefaults.buttonColors(Color.White),
+                                                               modifier = Modifier
 
-                                                            )
+                                                                   .border(
+                                                                       width = 2.dp,
+                                                                       color = Color.LightGray,
+                                                                       shape = RoundedCornerShape(30.dp)
+                                                                   )
+                                                                   .height(45.dp)
+                                                                   .padding(horizontal = 12.dp)
+                                                           ) {
+                                                               Text(
+                                                                   text = "Hủy đơn",
+                                                                   color = Color.Black
+                                                               )
 
-                                                    }
-                                                }
+                                                           }
+                                                           Button(
+                                                               onClick = { /*TODO*/ },
+                                                               colors = ButtonDefaults.buttonColors(Green),
+                                                               modifier = Modifier
 
-                                                Spacer(modifier = Modifier.height(40.dp))
+                                                                   .clip(RoundedCornerShape(30.dp))
+                                                                   .height(45.dp)
+                                                                   .padding(horizontal = 12.dp)
+                                                           ) {
+                                                               Text(
+                                                                   text = "Xem chi tiết",
 
-                                            }
-                                        }
-                                    }
+                                                                   )
+
+                                                           }
+                                                       }
+
+                                                       Spacer(modifier = Modifier.height(40.dp))
+
+                                                   }
+                                               }
+                                       }
 
                                 }
+
                             }
+                        }
 
                             2 ->
-                                LazyColumn(contentPadding = PaddingValues(12.dp)) {
-                                    items(uiStateOrder.orders.size) { index ->
-                                        if(uiStateOrder.orders[index].status == "1"){
-                                            Column {
-                                                Column(
 
-                                                    verticalArrangement = Arrangement.Center,
-                                                    horizontalAlignment = Alignment.CenterHorizontally
-                                                ) {
-
-                                                    Row(
-
-                                                        verticalAlignment = Alignment.CenterVertically,
-
-                                                        modifier = Modifier.padding(12.dp),
-                                                    ) {
-                                                        Image(
-                                                            painter = rememberImagePainter(uiStateOrder.orders[index].imageOrder),
-                                                            contentDescription = "Food Image",
-                                                            contentScale = ContentScale.FillBounds,
-                                                            modifier = Modifier
-                                                                .size(
-                                                                    width = 100.dp,
-                                                                    height = 90.dp
-                                                                )
-                                                                .padding(end = 10.dp)
-                                                                .border(
-                                                                    width = 1.dp,
-                                                                    color = Color.White,
-                                                                    shape = RoundedCornerShape(15.dp)
-                                                                )
-                                                                .clip(RoundedCornerShape(15.dp))
-                                                        )
-                                                        Spacer(modifier = Modifier.width(15.dp))
+                                Column {
+                                    LazyColumn(contentPadding = PaddingValues(12.dp)) {
+                                        items(uiStateOrder.orders.size) { index ->
+                                            if( uiStateOrder.orders[index].userID == userID){
+                                                if(uiStateOrder.orders[index].status == "1"){
+                                                    Column {
                                                         Column(
 
-                                                            modifier = Modifier.weight(0.7f),
+                                                            verticalArrangement = Arrangement.Center,
+                                                            horizontalAlignment = Alignment.CenterHorizontally
                                                         ) {
-                                                            Text(
-                                                                text = uiStateOrder.orders[index].titleOrder,
-                                                                color = Color.Black,
-                                                                fontSize = 20.sp,
-                                                                fontWeight = FontWeight.Bold
-                                                            )
 
                                                             Row(
-                                                                modifier = Modifier.padding(top=15.dp)
+
+                                                                verticalAlignment = Alignment.CenterVertically,
+
+                                                                modifier = Modifier.padding(12.dp),
                                                             ) {
-                                                                androidx.compose.material.Icon(
-                                                                    painter = painterResource(id = R.drawable.baseline_location_on_24),
-                                                                    contentDescription = "Movie Image",
+                                                                Image(
+                                                                    painter = rememberImagePainter(uiStateOrder.orders[index].imageOrder),
+                                                                    contentDescription = "Food Image",
+                                                                    contentScale = ContentScale.FillBounds,
                                                                     modifier = Modifier
-                                                                        .size(40.dp)
+                                                                        .size(
+                                                                            width = 100.dp,
+                                                                            height = 90.dp
+                                                                        )
                                                                         .padding(end = 10.dp)
                                                                         .border(
                                                                             width = 1.dp,
                                                                             color = Color.White,
                                                                             shape = RoundedCornerShape(
-                                                                                50.dp
+                                                                                15.dp
                                                                             )
                                                                         )
-                                                                        .clip(RoundedCornerShape(50.dp)),
-                                                                    tint = Color.Red
-
+                                                                        .clip(RoundedCornerShape(15.dp))
                                                                 )
-                                                                Text(
-                                                                    text = uiStateOrder.orders[index].address,
-                                                                    color = Color.Black,
-                                                                    fontSize = 13.sp,
-                                                                )
+                                                                Spacer(modifier = Modifier.width(15.dp))
+                                                                Column(
+
+                                                                    modifier = Modifier.weight(0.7f),
+                                                                ) {
+                                                                    Text(
+                                                                        text = uiStateOrder.orders[index].titleOrder,
+                                                                        color = Color.Black,
+                                                                        fontSize = 20.sp,
+                                                                        fontWeight = FontWeight.Bold
+                                                                    )
+
+                                                                    Row(
+                                                                        modifier = Modifier.padding(top=15.dp)
+                                                                    ) {
+                                                                        androidx.compose.material.Icon(
+                                                                            painter = painterResource(id = R.drawable.baseline_location_on_24),
+                                                                            contentDescription = "Movie Image",
+                                                                            modifier = Modifier
+                                                                                .size(40.dp)
+                                                                                .padding(end = 10.dp)
+                                                                                .border(
+                                                                                    width = 1.dp,
+                                                                                    color = Color.White,
+                                                                                    shape = RoundedCornerShape(
+                                                                                        50.dp
+                                                                                    )
+                                                                                )
+                                                                                .clip(
+                                                                                    RoundedCornerShape(
+                                                                                        50.dp
+                                                                                    )
+                                                                                ),
+                                                                            tint = Color.Red
+
+                                                                        )
+                                                                        Text(
+                                                                            text = uiStateOrder.orders[index].address,
+                                                                            color = Color.Black,
+                                                                            fontSize = 13.sp,
+                                                                        )
 
 
+
+                                                                    }
+                                                                    Spacer(modifier = Modifier.height(2.dp))
+                                                                    Text(
+                                                                        text = "${DecimalFormat("#,###").format(uiStateOrder.orders[index].total)}đ",
+                                                                        color = Color.Red,
+                                                                        fontSize = 22.sp,
+                                                                        fontWeight = FontWeight.Bold
+                                                                    )
+                                                                    Spacer(modifier = Modifier.height(2.dp))
+                                                                }
 
                                                             }
-                                                            Spacer(modifier = Modifier.height(2.dp))
-                                                            Text(
-                                                                text = "${DecimalFormat("#,###").format(uiStateOrder.orders[index].total)}đ",
-                                                                color = Color.Red,
-                                                                fontSize = 22.sp,
-                                                                fontWeight = FontWeight.Bold
-                                                            )
-                                                            Spacer(modifier = Modifier.height(2.dp))
+                                                            Spacer(modifier = Modifier.height(10.dp))
+                                                            Button(
+                                                                onClick = { /*TODO*/ },
+                                                                colors = ButtonDefaults.buttonColors(Green),
+                                                                modifier = Modifier
+                                                                    .fillMaxWidth()
+                                                                    .clip(RoundedCornerShape(30.dp))
+                                                                    .height(45.dp)
+                                                                    .padding(horizontal = 12.dp)
+                                                            ) {
+                                                                Text(
+                                                                    text = "Xem chi tiết",
+
+                                                                    )
+
+                                                            }
+                                                            Spacer(modifier = Modifier.height(40.dp))
+
                                                         }
-
                                                     }
-                                                    Spacer(modifier = Modifier.height(10.dp))
-                                                    Button(
-                                                        onClick = { /*TODO*/ },
-                                                        colors = ButtonDefaults.buttonColors(Green),
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .clip(RoundedCornerShape(30.dp))
-                                                            .height(45.dp)
-                                                            .padding(horizontal = 12.dp)
-                                                    ) {
-                                                        Text(
-                                                            text = "Xem chi tiết",
-
-                                                            )
-
-                                                    }
-                                                    Spacer(modifier = Modifier.height(40.dp))
 
                                                 }
                                             }
-
                                         }
+
                                     }
-
-
                                 }
+
+
 
                             3 ->
                                 LazyColumn(contentPadding = PaddingValues(12.dp)) {
                                     items(uiStateOrder.orders.size) { index ->
-                                        if(uiStateOrder.orders[index].status == "2"){
-                                            Column {
-                                                Column(
+                                        if( uiStateOrder.orders[index].userID == userID) {
+                                            if(uiStateOrder.orders[index].status == "2"){
+                                                Column {
+                                                    Column(
 
-                                                    verticalArrangement = Arrangement.Center,
-                                                    horizontalAlignment = Alignment.CenterHorizontally
-                                                ) {
-
-                                                    Row(
-
-                                                        verticalAlignment = Alignment.CenterVertically,
-
-                                                        modifier = Modifier.padding(12.dp),
+                                                        verticalArrangement = Arrangement.Center,
+                                                        horizontalAlignment = Alignment.CenterHorizontally
                                                     ) {
-                                                        Image(
-                                                            painter = rememberImagePainter(uiStateOrder.orders[index].imageOrder),
-                                                            contentDescription = "Food Image",
-                                                            contentScale = ContentScale.FillBounds,
-                                                            modifier = Modifier
-                                                                .size(
-                                                                    width = 100.dp,
-                                                                    height = 90.dp
-                                                                )
-                                                                .padding(end = 10.dp)
-                                                                .border(
-                                                                    width = 1.dp,
-                                                                    color = Color.White,
-                                                                    shape = RoundedCornerShape(15.dp)
-                                                                )
-                                                                .clip(RoundedCornerShape(15.dp))
-                                                        )
-                                                        Spacer(modifier = Modifier.width(15.dp))
-                                                        Column(
 
-                                                            modifier = Modifier.weight(0.7f),
+                                                        Row(
+
+                                                            verticalAlignment = Alignment.CenterVertically,
+
+                                                            modifier = Modifier.padding(12.dp),
                                                         ) {
-                                                            Text(
-                                                                text = uiStateOrder.orders[index].titleOrder,
-                                                                color = Color.Black,
-                                                                fontSize = 20.sp,
-                                                                fontWeight = FontWeight.Bold
+                                                            Image(
+                                                                painter = rememberImagePainter(uiStateOrder.orders[index].imageOrder),
+                                                                contentDescription = "Food Image",
+                                                                contentScale = ContentScale.FillBounds,
+                                                                modifier = Modifier
+                                                                    .size(
+                                                                        width = 100.dp,
+                                                                        height = 90.dp
+                                                                    )
+                                                                    .padding(end = 10.dp)
+                                                                    .border(
+                                                                        width = 1.dp,
+                                                                        color = Color.White,
+                                                                        shape = RoundedCornerShape(15.dp)
+                                                                    )
+                                                                    .clip(RoundedCornerShape(15.dp))
                                                             )
+                                                            Spacer(modifier = Modifier.width(15.dp))
+                                                            Column(
 
-                                                            Row(
-                                                                modifier = Modifier.padding(top=15.dp)
+                                                                modifier = Modifier.weight(0.7f),
                                                             ) {
-                                                                androidx.compose.material.Icon(
-                                                                    painter = painterResource(id = R.drawable.baseline_location_on_24),
-                                                                    contentDescription = "Movie Image",
-                                                                    modifier = Modifier
-                                                                        .size(40.dp)
-                                                                        .padding(end = 10.dp)
-                                                                        .border(
-                                                                            width = 1.dp,
-                                                                            color = Color.White,
-                                                                            shape = RoundedCornerShape(
-                                                                                50.dp
-                                                                            )
-                                                                        )
-                                                                        .clip(RoundedCornerShape(50.dp)),
-                                                                    tint = Color.Red
-
-                                                                )
                                                                 Text(
-                                                                    text = uiStateOrder.orders[index].address,
+                                                                    text = uiStateOrder.orders[index].titleOrder,
                                                                     color = Color.Black,
-                                                                    fontSize = 13.sp,
+                                                                    fontSize = 20.sp,
+                                                                    fontWeight = FontWeight.Bold
                                                                 )
 
+                                                                Row(
+                                                                    modifier = Modifier.padding(top=15.dp)
+                                                                ) {
+                                                                    androidx.compose.material.Icon(
+                                                                        painter = painterResource(id = R.drawable.baseline_location_on_24),
+                                                                        contentDescription = "Movie Image",
+                                                                        modifier = Modifier
+                                                                            .size(40.dp)
+                                                                            .padding(end = 10.dp)
+                                                                            .border(
+                                                                                width = 1.dp,
+                                                                                color = Color.White,
+                                                                                shape = RoundedCornerShape(
+                                                                                    50.dp
+                                                                                )
+                                                                            )
+                                                                            .clip(RoundedCornerShape(50.dp)),
+                                                                        tint = Color.Red
+
+                                                                    )
+                                                                    Text(
+                                                                        text = uiStateOrder.orders[index].address,
+                                                                        color = Color.Black,
+                                                                        fontSize = 13.sp,
+                                                                    )
 
 
+
+                                                                }
+                                                                Spacer(modifier = Modifier.height(2.dp))
+                                                                Text(
+                                                                    text = "${DecimalFormat("#,###").format(uiStateOrder.orders[index].total)}đ",
+                                                                    color = Color.Red,
+                                                                    fontSize = 22.sp,
+                                                                    fontWeight = FontWeight.Bold
+                                                                )
+                                                                Spacer(modifier = Modifier.height(2.dp))
                                                             }
-                                                            Spacer(modifier = Modifier.height(2.dp))
-                                                            Text(
-                                                                text = "${DecimalFormat("#,###").format(uiStateOrder.orders[index].total)}đ",
-                                                                color = Color.Red,
-                                                                fontSize = 22.sp,
-                                                                fontWeight = FontWeight.Bold
-                                                            )
-                                                            Spacer(modifier = Modifier.height(2.dp))
-                                                        }
 
-                                                        Spacer(modifier = Modifier.width(10.dp))
+                                                            Spacer(modifier = Modifier.width(10.dp))
+                                                            Button(
+                                                                onClick = { /*TODO*/ },
+                                                                colors = ButtonDefaults.buttonColors(Color.White),
+                                                                modifier = Modifier
+                                                                    .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(10.dp))
+
+
+                                                            ) {
+                                                                Text(text = "Trả đơn", color = Color.Black, fontSize = 13.sp)
+                                                            }
+
+                                                        }
+                                                        Spacer(modifier = Modifier.height(10.dp))
                                                         Button(
                                                             onClick = { /*TODO*/ },
-                                                            colors = ButtonDefaults.buttonColors(Color.White),
+                                                            colors = ButtonDefaults.buttonColors(Green),
                                                             modifier = Modifier
-                                                                .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(10.dp))
-
-
+                                                                .fillMaxWidth()
+                                                                .clip(RoundedCornerShape(30.dp))
+                                                                .height(45.dp)
+                                                                .padding(horizontal = 12.dp)
                                                         ) {
-                                                            Text(text = "Trả đơn", color = Color.Black, fontSize = 13.sp)
+                                                            Text(
+                                                                text = "Xem chi tiết",
+
+                                                                )
+
                                                         }
+                                                        Spacer(modifier = Modifier.height(40.dp))
 
                                                     }
-                                                    Spacer(modifier = Modifier.height(10.dp))
-                                                    Button(
-                                                        onClick = { /*TODO*/ },
-                                                        colors = ButtonDefaults.buttonColors(Green),
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .clip(RoundedCornerShape(30.dp))
-                                                            .height(45.dp)
-                                                            .padding(horizontal = 12.dp)
-                                                    ) {
-                                                        Text(
-                                                            text = "Xem chi tiết",
-
-                                                            )
-
-                                                    }
-                                                    Spacer(modifier = Modifier.height(40.dp))
-
                                                 }
-                                        }
 
+                                            }
+                                        }
                                     }
-                                 }
 
 
                                 }
 
                             4 ->
-                            LazyColumn(contentPadding = PaddingValues(12.dp)) {
-                                items(uiStateOrder.orders.size) { index ->
-                                    if(uiStateOrder.orders[index].status == "3"){
-                                        Column {
-                                            Column(
-                                                verticalArrangement = Arrangement.Center,
-                                                horizontalAlignment = Alignment.CenterHorizontally
-                                            ) {
-
-                                                Row(
-
-                                                    verticalAlignment = Alignment.CenterVertically,
-
-                                                    modifier = Modifier.padding(12.dp),
-                                                ) {
-                                                    Image(
-                                                        painter = rememberImagePainter(uiStateOrder.orders[index].imageOrder),
-                                                        contentDescription = "Food Image",
-                                                        contentScale = ContentScale.FillBounds,
-                                                        modifier = Modifier
-                                                            .size(width = 100.dp, height = 90.dp)
-                                                            .padding(end = 10.dp)
-                                                            .border(
-                                                                width = 1.dp,
-                                                                color = Color.White,
-                                                                shape = RoundedCornerShape(15.dp)
-                                                            )
-                                                            .clip(RoundedCornerShape(15.dp))
-                                                    )
-                                                    Spacer(modifier = Modifier.width(15.dp))
+                                LazyColumn(contentPadding = PaddingValues(12.dp)) {
+                                    items(uiStateOrder.orders.size) { index ->
+                                        if( uiStateOrder.orders[index].userID == userID) {
+                                            if(uiStateOrder.orders[index].status == "3"){
+                                                Column {
                                                     Column(
-
-                                                        modifier = Modifier.weight(0.7f),
+                                                        verticalArrangement = Arrangement.Center,
+                                                        horizontalAlignment = Alignment.CenterHorizontally
                                                     ) {
-                                                        Text(
-                                                            text = uiStateOrder.orders[index].titleOrder,
-                                                            color = Color.Black,
-                                                            fontSize = 20.sp,
-                                                            fontWeight = FontWeight.Bold
-                                                        )
 
                                                         Row(
-                                                            modifier = Modifier.padding(top=15.dp)
+
+                                                            verticalAlignment = Alignment.CenterVertically,
+
+                                                            modifier = Modifier.padding(12.dp),
                                                         ) {
-                                                            androidx.compose.material.Icon(
-                                                                painter = painterResource(id = R.drawable.baseline_location_on_24),
-                                                                contentDescription = "Movie Image",
+                                                            Image(
+                                                                painter = rememberImagePainter(uiStateOrder.orders[index].imageOrder),
+                                                                contentDescription = "Food Image",
+                                                                contentScale = ContentScale.FillBounds,
                                                                 modifier = Modifier
-                                                                    .size(40.dp)
+                                                                    .size(
+                                                                        width = 100.dp,
+                                                                        height = 90.dp
+                                                                    )
                                                                     .padding(end = 10.dp)
                                                                     .border(
                                                                         width = 1.dp,
                                                                         color = Color.White,
-                                                                        shape = RoundedCornerShape(
-                                                                            50.dp
-                                                                        )
+                                                                        shape = RoundedCornerShape(15.dp)
                                                                     )
-                                                                    .clip(RoundedCornerShape(50.dp)),
-                                                                tint = Color.Red
-
+                                                                    .clip(RoundedCornerShape(15.dp))
                                                             )
+                                                            Spacer(modifier = Modifier.width(15.dp))
+                                                            Column(
+
+                                                                modifier = Modifier.weight(0.7f),
+                                                            ) {
+                                                                Text(
+                                                                    text = uiStateOrder.orders[index].titleOrder,
+                                                                    color = Color.Black,
+                                                                    fontSize = 20.sp,
+                                                                    fontWeight = FontWeight.Bold
+                                                                )
+
+                                                                Row(
+                                                                    modifier = Modifier.padding(top=15.dp)
+                                                                ) {
+                                                                    androidx.compose.material.Icon(
+                                                                        painter = painterResource(id = R.drawable.baseline_location_on_24),
+                                                                        contentDescription = "Movie Image",
+                                                                        modifier = Modifier
+                                                                            .size(40.dp)
+                                                                            .padding(end = 10.dp)
+                                                                            .border(
+                                                                                width = 1.dp,
+                                                                                color = Color.White,
+                                                                                shape = RoundedCornerShape(
+                                                                                    50.dp
+                                                                                )
+                                                                            )
+                                                                            .clip(RoundedCornerShape(50.dp)),
+                                                                        tint = Color.Red
+
+                                                                    )
+                                                                    Text(
+                                                                        text = uiStateOrder.orders[index].address,
+                                                                        color = Color.Black,
+                                                                        fontSize = 13.sp,
+                                                                    )
+
+
+
+                                                                }
+                                                                Spacer(modifier = Modifier.height(2.dp))
+                                                                Text(
+                                                                    text = "${DecimalFormat("#,###").format(uiStateOrder.orders[index].total)}đ",
+                                                                    color = Color.Red,
+                                                                    fontSize = 22.sp,
+                                                                    fontWeight = FontWeight.Bold
+                                                                )
+                                                                Spacer(modifier = Modifier.height(2.dp))
+                                                            }
+                                                        }
+                                                        Spacer(modifier = Modifier.height(10.dp))
+                                                        val foodId = uiStateOrder.orders[index].code
+                                                        Button(
+                                                            onClick = {
+                                                                navControllerNotes.navigate("CartComponent/$foodId")
+                                                            },
+                                                            colors = ButtonDefaults.buttonColors(Green),
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .clip(RoundedCornerShape(30.dp))
+                                                                .height(45.dp)
+                                                                .padding(horizontal = 12.dp)
+
+                                                        ) {
                                                             Text(
-                                                                text = uiStateOrder.orders[index].address,
-                                                                color = Color.Black,
-                                                                fontSize = 13.sp,
+                                                                text = "Mua lại",
                                                             )
-
-
 
                                                         }
-                                                        Spacer(modifier = Modifier.height(2.dp))
-                                                        Text(
-                                                            text = "${DecimalFormat("#,###").format(uiStateOrder.orders[index].total)}đ",
-                                                            color = Color.Red,
-                                                            fontSize = 22.sp,
-                                                            fontWeight = FontWeight.Bold
-                                                        )
-                                                        Spacer(modifier = Modifier.height(2.dp))
+                                                        Spacer(modifier = Modifier.height(40.dp))
+
                                                     }
                                                 }
-                                                Spacer(modifier = Modifier.height(10.dp))
-                                                val foodId = uiStateOrder.orders[index].code
-                                                Button(
-                                                    onClick = {
-                                                        navControllerNotes.navigate("CartComponent/$foodId")
-                                                              },
-                                                    colors = ButtonDefaults.buttonColors(Green),
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .clip(RoundedCornerShape(30.dp))
-                                                        .height(45.dp)
-                                                        .padding(horizontal = 12.dp)
-
-                                                ) {
-                                                    Text(
-                                                        text = "Mua lại",
-                                                    )
-
-                                                }
-                                                Spacer(modifier = Modifier.height(40.dp))
-
                                             }
                                         }
                                     }
                                 }
-                            }
                         }
                     }
                 }

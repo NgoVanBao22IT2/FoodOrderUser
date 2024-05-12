@@ -4,6 +4,7 @@ import com.breens.orderfood.common.Result
 import com.breens.orderfood.data.model.Banner
 import com.breens.orderfood.data.model.Card
 import com.breens.orderfood.data.model.Cate
+import com.breens.orderfood.data.model.Chat
 import com.breens.orderfood.data.model.Order
 import com.breens.orderfood.data.model.Task
 import com.breens.orderfood.data.model.User
@@ -26,10 +27,12 @@ interface Repository {
     suspend fun getAllCates(): Result<List<Cate>>
 
 
-    suspend fun addOrder(code: String, address: String,imageOrder: String, titleOrder: String,price: Int, quantity: Int, paymentMethods: String, total: Int): Result<Unit>
+    suspend fun addOrder(userID: String, code: String, address: String,imageOrder: String, titleOrder: String,price: Int, quantity: Int, paymentMethods: String, total: Int): Result<Unit>
     suspend fun getAllOrder(): Result<List<Order>>
-    suspend fun updateStatus(code: String, address: String,imageOrder: String, titleOrder: String,price:  Int , quantity:  Int, paymentMethods: String, total: Int,status: String, orderId: String): Result<Unit>
+    suspend fun updateStatus(userID: String, code: String, address: String,imageOrder: String, titleOrder: String,price:  Int , quantity:  Int, paymentMethods: String, total: Int,status: String, orderId: String): Result<Unit>
 
+    suspend fun addMessage( senderID: String, message: String, direction : Boolean): Result<Unit>
+    suspend fun getAllMessage(): Result<List<Chat>>
 }
 
 

@@ -46,6 +46,7 @@ data class Order(
     val total: Int = 0,
     val status: String = "",
     val code : String = "",
+    val userID : String = "",
 )
 data class Cate(
     val cateId: String = "",
@@ -58,7 +59,16 @@ data class TabItemsOrder(
     val title: String,
 )
 data class User(
+    val userID: String = "",
     val firstName: String?,
     val lastName: String?,
     val email: String
+)
+data class Chat(
+    val chatID: String = "",
+    val senderID: String = "",
+    val receiveID: String = "",
+    val message: String =" ",
+    val direction: Boolean = false,
+    val createdAt: String = "",
 )

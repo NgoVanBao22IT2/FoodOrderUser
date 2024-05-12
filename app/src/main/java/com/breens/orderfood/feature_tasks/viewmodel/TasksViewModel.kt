@@ -65,6 +65,7 @@ class TasksViewModel @Inject constructor(private val taskRepository: Repository)
                 onChangeTaskTitle(oldState = oldState, title = event.title)
             }
 
+
         }
     }
 

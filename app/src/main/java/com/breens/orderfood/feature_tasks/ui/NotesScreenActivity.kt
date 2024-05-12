@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -74,9 +75,11 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Surface
 import com.breens.orderfood.feature_tasks.events.CardsScreenUiEvent
+import com.breens.orderfood.feature_tasks.events.ChatScreenUiEvent
 import com.breens.orderfood.feature_tasks.events.SignInScreenUiEvent
 import com.breens.orderfood.feature_tasks.side_effects.SignInScreenSideEffects
 import com.breens.orderfood.feature_tasks.ui.components.Card2Component
+import com.breens.orderfood.feature_tasks.ui.components.ChatComponent
 import com.breens.orderfood.feature_tasks.ui.components.FavoriteFoodComponent
 import com.breens.orderfood.feature_tasks.ui.components.Profile
 import com.breens.orderfood.feature_tasks.ui.components.SignInComponent
@@ -84,6 +87,7 @@ import com.breens.orderfood.feature_tasks.ui.components.SignUpComponent
 import com.breens.orderfood.feature_tasks.ui.components.TabOrderComponent
 import com.breens.orderfood.feature_tasks.viewmodel.AccountViewModel
 import com.breens.orderfood.feature_tasks.viewmodel.CardsViewModel
+import com.breens.orderfood.feature_tasks.viewmodel.ChatViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 
@@ -123,12 +127,14 @@ fun FoodScreenActivity() {
     val orderViewModel: OrderViewModel = viewModel()
     val accountViewModel: AccountViewModel = viewModel()
     val cardsViewModel: CardsViewModel = viewModel()
+    val chatViewModel: ChatViewModel = viewModel()
 
     val effectFlow = tasksViewModel.effect
     val effectFlowCate = catesViewModel.effectCate
     val effectFlowBanner = bannerViewModel.effect1
     val effectFlowOrder = orderViewModel.effectOrder
     val effectFlowAccount = accountViewModel.effectAccount
+    val effectMessage= chatViewModel.effectMessage
     val snackBarHostState = remember {
         SnackbarHostState()
     }
@@ -139,6 +145,7 @@ fun FoodScreenActivity() {
     val uiStateOrder = orderViewModel.stateOrder.collectAsState().value
     val uiStateAccount = accountViewModel.stateAccount.collectAsState().value
     val uiStateCard = cardsViewModel.state.collectAsState().value
+    val uiStateMessage = chatViewModel.stateMessage.collectAsState().value
 
 
     val tabItems = listOf(
@@ -162,7 +169,7 @@ fun FoodScreenActivity() {
         ),
         TabItems(
             id = 4,
-            title = "Thông báo",
+            title = "ChatBox",
             unselectedIcon = Icons.Outlined.Notifications,
             selectedIcon = Icons.Filled.Notifications
         ),
@@ -262,7 +269,7 @@ fun FoodScreenActivity() {
     Column(
         modifier = Modifier
             .fillMaxSize(),
-        ) {
+    ) {
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
@@ -687,6 +694,7 @@ fun FoodScreenActivity() {
                                         !uiStateOrder.isLoading && uiStateOrder.orders.isNotEmpty() -> {
                                             TabOrderComponent(
                                                 navControllerNotes = navController,
+                                                uiStateAccount = uiStateAccount,
                                                 uiStateOrder = uiStateOrder,
                                                 setOrderAddress = { address ->
                                                     orderViewModel.sendEvent(
@@ -769,6 +777,48 @@ fun FoodScreenActivity() {
                                         }
 
                                     }
+                                4 ->
+                                    when {
+                                        uiStateMessage.isLoading -> {
+                                            LoadingComponent()
+                                        }
+                                        !uiStateMessage.isLoading -> {
+                                           ChatComponent(navController = navController,
+                                               uiState = uiStateMessage,
+                                               uiStateAccount = uiStateAccount,
+                                               setMessage = {message ->
+                                                   chatViewModel.sendEvent(
+                                                       event = ChatScreenUiEvent.OnChangeMessage(message = message),
+                                                   )
+                                               },
+                                               direction = {direction ->
+                                                   chatViewModel.sendEvent(
+                                                       event = ChatScreenUiEvent.OnChangeDirection(direction = direction),
+                                                   )
+                                               },
+                                               senderID = {senderID ->
+                                                   chatViewModel.sendEvent(
+                                                       event = ChatScreenUiEvent.OnChangeSenderID(senderID = senderID),
+                                                   )
+                                               },
+                                               senderMessage = {
+                                                   chatViewModel.sendEvent(
+                                                       event = ChatScreenUiEvent.AddMessage(
+                                                           message = uiStateMessage.currentMessage,
+                                                           senderID = uiStateMessage.currentSenderID,
+                                                           direction = uiStateMessage.direction
+
+                                                       ),
+                                                   )
+                                               }
+                                           )
+
+
+                                        }
+
+
+                                    }
+
                                 5 ->
                                     when {
                                         uiStateAccount.isLoading -> {
@@ -791,7 +841,21 @@ fun FoodScreenActivity() {
                             val id = backStackEntry.arguments?.getString("id")
                             val food = uiState.tasks.first { it.taskId == id }
 
-                            DetailScreen(navController = navController, food, uiStateOrder = uiStateOrder)
+                            DetailScreen(
+                                navController = navController,
+                                food, uiStateOrder = uiStateOrder,
+                                uiStateAccount = uiStateAccount,
+                                openDialog = {
+                                    orderViewModel.sendEvent(
+                                        event = OrderScreenUiEvent.OnChangeDialogState(show = true),
+                                    )
+                                },
+                                closeDialog = {
+                                    orderViewModel.sendEvent(
+                                        event = OrderScreenUiEvent.OnChangeDialogState(show = false),
+                                    )
+                                },
+                            )
                         }
                         composable("CartComponent/{foodId}") { backStackEntry ->
                             val id = backStackEntry.arguments?.getString("foodId")
@@ -799,9 +863,15 @@ fun FoodScreenActivity() {
 
                             CartComponent(
                                 navController = navController,
+                                uiStateAccount = uiStateAccount,
                                 uiState = uiState,
                                 foodCart,
                                 uiStateOrder = uiStateOrder,
+                                setUserID = {userID ->
+                                    orderViewModel.sendEvent(
+                                        event = OrderScreenUiEvent.OnChangeUserID(userID = userID),
+                                    )
+                                },
                                 setFoodCode = {code ->
                                     orderViewModel.sendEvent(
                                         event = OrderScreenUiEvent.OnChangeFoodCode(code = code),
@@ -847,6 +917,7 @@ fun FoodScreenActivity() {
                                 saveOrder = {
                                     orderViewModel.sendEvent(
                                         event = OrderScreenUiEvent.AddOrder(
+                                            userID = uiStateOrder.currentUserID,
                                             code = uiStateOrder.currentCode,
                                             address = uiStateOrder.currentAddressOrder,
                                             imageOrder = uiStateOrder.imgUrlOrder,

@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -30,6 +32,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +52,7 @@ import coil.compose.rememberImagePainter
 import com.breens.orderfood.R
 import com.breens.orderfood.data.model.Task
 import com.breens.orderfood.feature_tasks.state.OrderScreenUiState
+import com.breens.orderfood.feature_tasks.state.SignInScreenUiState
 import com.breens.orderfood.feature_tasks.state.TasksScreenUiState
 import com.example.movieui.core.theme.FoodColor
 import com.example.movieui.core.theme.Yellow
@@ -58,8 +62,10 @@ import java.text.DecimalFormat
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CartComponent(navController: NavHostController,
+                  uiStateAccount: SignInScreenUiState,
                   uiState: TasksScreenUiState,
                   foodCart : Task,
+                  setUserID: (String) -> Unit,
                   setFoodCode: (String) -> Unit,
                   setOrderAddress:(String)->Unit,
                   setOrderPayment: (String) -> Unit,
@@ -98,6 +104,11 @@ fun CartComponent(navController: NavHostController,
         }
 
     ) { padding ->
+        LazyColumn{
+            items(uiStateAccount.accounts.size) { index ->
+                setUserID(uiStateAccount.accounts[index].userID)
+            }
+        }
         Column(
             modifier = Modifier
                 .padding(padding)
@@ -259,9 +270,9 @@ fun CartComponent(navController: NavHostController,
                                 modifier = Modifier
                                     .padding(vertical = 2.dp, horizontal = 5.dp)
                                     .clickable {
-                                       navController.popBackStack()
                                         navController.popBackStack()
-                                },
+                                        navController.popBackStack()
+                                    },
                                 fontWeight = FontWeight.Medium,
                                 color = Color.Black
                             )
@@ -289,6 +300,7 @@ fun CartComponent(navController: NavHostController,
                     modifier = Modifier.padding(top=15.dp)
                 ) {
                     setFoodCode(foodCart.taskId)
+
                     setOrderImage(foodCart.image)
                     Image(
                         painter = rememberImagePainter(foodCart.image),
@@ -357,8 +369,9 @@ fun CartComponent(navController: NavHostController,
                             contentDescription = "Add",
                             modifier = Modifier
                                 .clickable {
-                                    uiStateValue.value = uiStateValue.value.copy(valueCart = uiStateValue.value.valueCart + 1)
-                                  }
+                                    uiStateValue.value =
+                                        uiStateValue.value.copy(valueCart = uiStateValue.value.valueCart + 1)
+                                }
                                 .size(25.dp),
                             tint = Color.Red
                         )

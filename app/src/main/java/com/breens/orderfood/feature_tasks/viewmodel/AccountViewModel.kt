@@ -1,5 +1,8 @@
 package com.breens.orderfood.feature_tasks.viewmodel
 
+import android.content.Context
+import android.media.RouteListingPreference
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.breens.orderfood.common.Result
@@ -7,6 +10,10 @@ import com.breens.orderfood.data.repositories.Repository
 import com.breens.orderfood.feature_tasks.events.SignInScreenUiEvent
 import com.breens.orderfood.feature_tasks.side_effects.SignInScreenSideEffects
 import com.breens.orderfood.feature_tasks.state.SignInScreenUiState
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,10 +21,23 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
+
+object MessageType {
+    const val TEXT = "TEXT"
+    const val IMAGE = "IMAGE"
+}
+
+interface Message {
+    val time: Date
+    val senderId: String
+    val recipientId: String
+    val senderName: String
+    val type: String
+}
 @HiltViewModel
 class AccountViewModel @Inject constructor(private val accountRepository: Repository) : ViewModel() {
-
     private val _stateAccount: MutableStateFlow<SignInScreenUiState> =
         MutableStateFlow(SignInScreenUiState())
     val stateAccount: StateFlow<SignInScreenUiState> = _stateAccount.asStateFlow()
@@ -68,6 +88,7 @@ class AccountViewModel @Inject constructor(private val accountRepository: Reposi
                 onChangePassword(oldStateAccount = oldStateAccount, password = event.password)
             }
 
+
         }
     }
 
@@ -110,8 +131,8 @@ class AccountViewModel @Inject constructor(private val accountRepository: Reposi
                 is Result.Failure -> {
                     setState(oldStateAccount.copy(isLoading = false))
 
-                    val errorMessage = " Đăng nhập thất bại!"
-//                        resultAccount.exception.message ?: "An error occurred when adding task"
+                    val errorMessage =
+                        resultAccount.exception.message ?: " Đăng nhập thất bại!"
                     setEffect { SignInScreenSideEffects.ShowSnackBarMessage(messageAccount = errorMessage) }
                 }
 
@@ -130,27 +151,6 @@ class AccountViewModel @Inject constructor(private val accountRepository: Reposi
             }
         }
     }
-    /*private fun getAccount( oldStateAccount: SignInScreenUiState) {
-        viewModelScope.launch {
-            setState(oldStateAccount.copy(isLoading = true))
-
-            when (val result = accountRepository.getAllAccount()) {
-                is Result.Failure -> {
-                    setState(oldStateAccount.copy(isLoading = false))
-
-                    val errorMessage =
-                        result.exception.message ?: "An error occurred when getting your task"
-                    setEffect { SignInScreenSideEffects.ShowSnackBarMessage(messageAccount = errorMessage) }
-                }
-
-                is Result.Success -> {
-                    val accounts = result.data
-                    setState(oldStateAccount.copy(isLoading = false, accounts = accounts))
-                }
-            }
-        }
-    }*/
-
     private fun onChangeFirstname(oldStateAccount: SignInScreenUiState, firstname: String) {
         setState(oldStateAccount.copy(currentFirstname = firstname))
     }

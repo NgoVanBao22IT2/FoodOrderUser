@@ -19,3 +19,6 @@ sealed class SignInScreenSideEffects {
 sealed class CardScreenSideEffects {
     data class ShowSnackBarMessage(val messageCard: String) : CardScreenSideEffects()
 }
+sealed class ChatScreenSideEffects {
+    data class ShowSnackBarMessage(val messageChat: String) : ChatScreenSideEffects()
+}

@@ -2,6 +2,7 @@ package com.breens.orderfood.feature_tasks.ui.components
 
 import android.text.Html
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -24,11 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.breens.orderfood.R
 import com.breens.orderfood.data.model.Task
 import com.breens.orderfood.feature_tasks.state.OrderScreenUiState
+import com.breens.orderfood.feature_tasks.state.SignInScreenUiState
 import com.example.movieui.core.theme.FoodColor
 import com.example.movieui.core.theme.Gray
 import java.text.DecimalFormat
@@ -38,10 +41,31 @@ import java.text.DecimalFormat
 fun DetailScreen(
     navController: NavHostController,
     food: Task,
-    uiStateOrder: OrderScreenUiState
+    uiStateOrder: OrderScreenUiState,
+    uiStateAccount: SignInScreenUiState,
+    openDialog: () -> Unit,
+    closeDialog: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val uiStateValue = remember { mutableStateOf(OrderScreenUiState()) }
+    if (uiStateOrder.isShowDialog) {
+        AlertDialog(
+            onDismissRequest = closeDialog,
+            title = {
+                Text(text = "Thông báo")
+            },
+            text = {
+                Text(text = "Vui lòng đăng nhập để tiếp tục!.")
+            },
+            confirmButton = {
+                Button(
+                    onClick = closeDialog
+                ) {
+                    Text("OK")
+                }
+            }
+        )
+    }
     Scaffold(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
@@ -54,7 +78,13 @@ fun DetailScreen(
                 ),
                 shape = RoundedCornerShape(32.dp),
                 onClick = {
-                    navController.navigate("CartComponent/${food.taskId}")
+                    if (uiStateAccount.accounts.isEmpty()) {
+                        openDialog()
+                    } else {
+                        navController.navigate("CartComponent/${food.taskId}")
+                    }
+
+
                 },
             ) {
                 Text(text = "Mua ngay", color = Color.White)

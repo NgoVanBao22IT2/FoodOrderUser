@@ -7,5 +7,6 @@ const val COLLECTION_PATH_NAME_BANNER = "banners"
 const val COLLECTION_PATH_NAME_CATEGORY = "categories"
 const val COLLECTION_PATH_NAME_ACCOUNT = "account"
 const val COLLECTION_PATH_NAME_CARD= "cards"
+const val COLLECTION_PATH_NAME_MESSAGE= "messages"
 
 const val PLEASE_CHECK_INTERNET_CONNECTION = "Please check your internet connection"

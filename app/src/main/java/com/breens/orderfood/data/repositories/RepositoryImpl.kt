@@ -1,11 +1,15 @@
 package com.breens.orderfood.data.repositories
 
+import android.content.ContentValues.TAG
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import com.breens.orderfood.common.COLLECTION_PATH_NAME
 import com.breens.orderfood.common.COLLECTION_PATH_NAME_ACCOUNT
 import com.breens.orderfood.common.COLLECTION_PATH_NAME_BANNER
 import com.breens.orderfood.common.COLLECTION_PATH_NAME_CARD
 import com.breens.orderfood.common.COLLECTION_PATH_NAME_CATEGORY
+import com.breens.orderfood.common.COLLECTION_PATH_NAME_MESSAGE
 import com.breens.orderfood.common.COLLECTION_PATH_NAME_ORDER
 import com.breens.orderfood.common.PLEASE_CHECK_INTERNET_CONNECTION
 import com.breens.orderfood.common.Result
@@ -14,19 +18,27 @@ import com.breens.orderfood.common.getCurrentTimeAsString
 import com.breens.orderfood.data.model.Banner
 import com.breens.orderfood.data.model.Card
 import com.breens.orderfood.data.model.Cate
+import com.breens.orderfood.data.model.Chat
 import com.breens.orderfood.data.model.Order
 import com.breens.orderfood.data.model.Task
 import com.breens.orderfood.data.model.User
 import com.breens.orderfood.di.IoDispatcher
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
+import kotlin.random.Random
 
 class RepositoryImpl @Inject constructor(
+    private val firebaseDatabase: FirebaseDatabase,
     private val firebaseAuth: FirebaseAuth,
     private val foodDB: FirebaseFirestore,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
@@ -47,10 +59,12 @@ class RepositoryImpl @Inject constructor(
                 if (authResult.user != null) {
                     val users = try {
                         foodDB.collection(COLLECTION_PATH_NAME_ACCOUNT)
+                            .whereEqualTo("email", email)
                             .get()
                             .await()
                             .documents.map { document ->
                                 User(
+                                    userID = document.id,
                                     firstName = document.getString("firstName") ?: "",
                                     lastName  = document.getString("lastName") ?: "",
                                     email  = document.getString("email") ?: "",
@@ -74,7 +88,9 @@ class RepositoryImpl @Inject constructor(
             Result.Failure(exception = exception)
         }
     }
-
+    /*.document("8kbrzXslDixuiEKcNpXC") // Giả sử userID được sử dụng làm ID của phần tử mẹ
+    .collection("orders") // Giả sử "orders" là tên của collection chứa các đơn hàng
+    .add(order)*/
     override suspend fun registerUser(firstName:String, lastName: String,email: String, password: String): Result<Unit> {
         return try {
             withContext(ioDispatcher) {
@@ -372,6 +388,7 @@ class RepositoryImpl @Inject constructor(
         }
     }
     override suspend fun addOrder(
+        userID: String,
         code: String,
         address: String,
         imageOrder: String,
@@ -384,6 +401,7 @@ class RepositoryImpl @Inject constructor(
         return try {
             withContext(ioDispatcher) {
                 val order = hashMapOf(
+                    "userID" to userID,
                     "code" to code,
                     "address" to address,
                     "imageOrder" to imageOrder,
@@ -428,6 +446,7 @@ class RepositoryImpl @Inject constructor(
                         .documents.map { document ->
                             Order(
                                 orderId = document.id,
+                                userID = document.getString("userID") ?: "",
                                 code = document.getString("code") ?: "",
                                 address = document.getString("address") ?: "",
                                 imageOrder = document.getString("imageOrder") ?: "",
@@ -481,10 +500,11 @@ class RepositoryImpl @Inject constructor(
             Result.Failure(exception = exception)
         }
     }
-    override suspend fun updateStatus(code: String, address: String,imageOrder: String, titleOrder: String,price:  Int , quantity:  Int, paymentMethods: String, total: Int,status: String, orderId: String): Result<Unit> {
+    override suspend fun updateStatus(userID:String, code: String, address: String,imageOrder: String, titleOrder: String,price:  Int , quantity:  Int, paymentMethods: String, total: Int,status: String, orderId: String): Result<Unit> {
         return try {
             withContext(ioDispatcher) {
                 val statusUpdate: Map<String, Any> = hashMapOf(
+                    "userID" to userID,
                     "code" to code,
                     "address" to address,
                     "imageOrder" to imageOrder,
@@ -516,5 +536,98 @@ class RepositoryImpl @Inject constructor(
             Result.Failure(exception = exception)
         }
     }
+
+    override suspend fun addMessage(
+        senderID: String,
+        message: String,
+        direction: Boolean
+    ): Result<Unit> {
+        return try {
+            withContext(ioDispatcher) {
+                val message = hashMapOf(
+                    "senderID" to senderID,
+                    "message" to message,
+                    "direction" to direction,
+                    "createdAt" to getCurrentTimeAsString(),
+                )
+
+                val addOrderTimeout = withTimeoutOrNull(10000L) {
+                    val dbRef = firebaseDatabase.reference.child("ContentMessage")
+                    val contactRef = dbRef.child((getCurrentTimeAsString()))
+                    contactRef.setValue(message)
+
+                }
+
+                if (addOrderTimeout == null) {
+                    Log.d("ERROR: ", PLEASE_CHECK_INTERNET_CONNECTION)
+
+                    Result.Failure(IllegalStateException(PLEASE_CHECK_INTERNET_CONNECTION))
+                }
+
+                Result.Success(Unit)
+            }
+        } catch (exception: Exception) {
+            Log.d("ERROR: ", "$exception")
+
+            Result.Failure(exception = exception)
+        }
+    }
+
+
+    override suspend fun getAllMessage(): Result<List<Chat>> {
+        return try {
+            withContext(ioDispatcher) {
+
+                val fetchingOrdersTimeout = withTimeoutOrNull(10000L) {
+
+                    val contactRefs = firebaseDatabase.reference.child("ContentMessage")
+                    val deferred = CompletableDeferred<List<Chat>>()
+
+                    contactRefs.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val chatList = mutableListOf<Chat>()
+                            var chatList1 = mutableListOf<Chat>()
+                            dataSnapshot.children.forEach { data ->
+                                val chat = Chat(
+                                    chatID = data.key ?: "",
+                                    senderID = data.child("senderID").value as? String ?: "",
+                                    direction = data.child("direction").value as? Boolean?: false,
+                                    receiveID = data.child("receiveID").value as? String ?: "",
+                                    message = data.child("message").value as? String ?: "",
+                                    createdAt = convertDateFormat(data.child("createdAt").value as? String ?: ""),
+                                )
+                                chatList.add(chat)
+//                                 reversedList = chatList.reversed()\
+
+                            }
+
+                            deferred.complete(chatList)
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            // Failed to read value
+                            Log.w(TAG, "Failed to read value.", error.toException())
+                            deferred.completeExceptionally(error.toException())
+                        }
+                    })
+
+                    deferred.await()
+
+                }
+
+                if (fetchingOrdersTimeout == null) {
+                    Log.d("ERROR: ", PLEASE_CHECK_INTERNET_CONNECTION)
+                    Result.Failure(IllegalStateException(PLEASE_CHECK_INTERNET_CONNECTION))
+                } else {
+                    Log.d("MESSAGES: ", "${fetchingOrdersTimeout}")
+                    Result.Success(fetchingOrdersTimeout)
+                }
+            }
+        } catch (exception: Exception) {
+            Log.d("ERROR: ", "$exception")
+            Result.Failure(exception = exception)
+        }
+    }
+
 
 }

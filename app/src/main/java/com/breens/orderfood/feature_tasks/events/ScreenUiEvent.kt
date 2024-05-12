@@ -10,6 +10,7 @@ sealed class TasksScreenUiEvent {
     data class OnChangeTaskBody(val body: String) : TasksScreenUiEvent()
     data class OnChangeTaskPrice(val price: Int) : TasksScreenUiEvent()
 
+
 }
 sealed class CardsScreenUiEvent {
     object GetCards : CardsScreenUiEvent()
@@ -38,7 +39,7 @@ sealed class CatesScreenUiEvent {
 }
 sealed class OrderScreenUiEvent {
     object GetOrder : OrderScreenUiEvent()
-    data class AddOrder(val code: String,val address: String, val imageOrder: String,val titleOrder: String,val price: Int,val quantity: Int,val paymentMethods: String, val total: Int) : OrderScreenUiEvent()
+    data class AddOrder(val userID: String, val code: String,val address: String, val imageOrder: String,val titleOrder: String,val price: Int,val quantity: Int,val paymentMethods: String, val total: Int) : OrderScreenUiEvent()
     data class OnChangeOrderAddress(val address: String) : OrderScreenUiEvent()
     data class OnChangeOrderQuantity(val quantity: Int) : OrderScreenUiEvent()
     data class OnChangeOrderPayment(val paymentMethods: String) : OrderScreenUiEvent()
@@ -48,8 +49,10 @@ sealed class OrderScreenUiEvent {
     data class OnChangeOrderTotal(val total: Int) : OrderScreenUiEvent()
     data class OnChangeOrderStatus(val status: String) : OrderScreenUiEvent()
     data class OnChangeFoodCode(val code: String) : OrderScreenUiEvent()
+    data class OnChangeUserID(val userID: String) : OrderScreenUiEvent()
     object UpdateNote : OrderScreenUiEvent()
     data class SetStatusToBeUpdated(val statusToBeUpdated: Order) : OrderScreenUiEvent()
+    data class OnChangeDialogState(val show: Boolean) : OrderScreenUiEvent()
 }
 sealed class SignInScreenUiEvent {
     object GetAccount : SignInScreenUiEvent()
@@ -60,5 +63,13 @@ sealed class SignInScreenUiEvent {
     data class OnChangeEmail(val email: String) : SignInScreenUiEvent()
     data class OnChangePassword(val password: String) : SignInScreenUiEvent()
 
+}
+sealed class ChatScreenUiEvent {
+    object GetMessage : ChatScreenUiEvent()
+    data class AddMessage(val senderID: String, val message: String, val direction: Boolean ) : ChatScreenUiEvent()
+    data class OnChangeSenderID(val senderID: String) : ChatScreenUiEvent()
+    data class OnChangeMessage(val message: String) : ChatScreenUiEvent()
+    data class OnChangeReceiveID(val receiveID: String) : ChatScreenUiEvent()
+    data class OnChangeDirection(val direction: Boolean) : ChatScreenUiEvent()
 }
 
