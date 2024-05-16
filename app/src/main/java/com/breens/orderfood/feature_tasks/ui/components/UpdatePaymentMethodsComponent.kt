@@ -24,11 +24,13 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
+import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,14 +38,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.breens.orderfood.R
 import com.breens.orderfood.feature_tasks.state.OrderScreenUiState
+import com.breens.orderfood.feature_tasks.state.TasksScreenUiState
 import com.breens.orderfood.feature_tasks.state.optionsPayment
+import com.breens.orderfood.theme.colorGreenDark
 import com.example.movieui.core.theme.Yellow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,7 +67,7 @@ fun UpdatePaymentMethodsComponent(navController: NavHostController, uiStateOrder
                     .height(56.dp)
                     .padding(horizontal = 12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Yellow
+                    backgroundColor = colorGreenDark
                 ),
                 shape = RoundedCornerShape(32.dp),
                 onClick = {
@@ -105,9 +111,10 @@ fun UpdatePaymentMethodsComponent(navController: NavHostController, uiStateOrder
                             .fillMaxWidth()
                             .padding(12.dp)
                             .selectable(
-                                selected = uiStateValue.value.selectedOptionPayment== optionsPayment,
+                                selected = uiStateValue.value.selectedOptionPayment == optionsPayment,
                                 onClick = {
-                                    uiStateValue.value = uiStateValue.value.copy(selectedOptionPayment = optionsPayment)
+                                    uiStateValue.value =
+                                        uiStateValue.value.copy(selectedOptionPayment = optionsPayment)
                                 }
                             )
                             .padding(horizontal = 16.dp),
@@ -137,7 +144,7 @@ fun UpdatePaymentMethodsComponent(navController: NavHostController, uiStateOrder
                                             shape = RoundedCornerShape(50.dp)
                                         )
                                         .clip(RoundedCornerShape(50.dp))
-                                        .background(Color.Green),
+                                        .background(colorGreenDark),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
@@ -167,7 +174,11 @@ fun UpdatePaymentMethodsComponent(navController: NavHostController, uiStateOrder
                         }
                         RadioButton(
                             selected =  uiStateValue.value.selectedOptionPayment == optionsPayment,
-                            onClick = null
+                            onClick = null,
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = colorGreenDark,
+                                unselectedColor = Color.Gray
+                            )
                         )
                     }
                 }
@@ -179,5 +190,16 @@ fun UpdatePaymentMethodsComponent(navController: NavHostController, uiStateOrder
 
 
         }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun DemoPayment() {
+    Surface {
+        UpdatePaymentMethodsComponent(
+            navController = NavHostController(LocalContext.current),
+            uiStateOrder = OrderScreenUiState()
+        )
     }
 }

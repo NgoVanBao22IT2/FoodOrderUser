@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
@@ -28,13 +29,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.breens.orderfood.R
 import com.breens.orderfood.data.model.Card
 import com.breens.orderfood.feature_tasks.state.CardsScreenUiState
+import com.breens.orderfood.feature_tasks.state.TasksScreenUiState
 import com.breens.orderfood.theme.Xam
 
 @Composable
@@ -141,3 +145,4 @@ fun Card2Component(
 
     Spacer(modifier = Modifier.height(16.dp))
 }
+

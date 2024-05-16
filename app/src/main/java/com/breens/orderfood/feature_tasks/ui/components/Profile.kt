@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
@@ -30,20 +31,24 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.breens.orderfood.R
 import com.breens.orderfood.feature_tasks.state.SignInScreenUiState
 import com.breens.orderfood.theme.Mediumseagreen
+import com.breens.orderfood.theme.colorGreenDark
 import com.breens.orderfood.theme.colorWhite
 
 @Composable
@@ -65,17 +70,23 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                 horizontalArrangement = Arrangement.Start
 
             ) {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "",
-                    tint = Mediumseagreen,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .padding(start = 10.dp),
+                IconButton(onClick = {
 
-                    )
+                }) {
+                    Icon(painter = painterResource(id = R.drawable.baseline_person_pin_24),
+                        contentDescription = "",
+                        tint = colorGreenDark,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(start = 10.dp),)
 
-
+                }
+                Text(
+                    text = "Profile",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 7.dp)
+                )
             }
             Spacer(modifier = Modifier.height(15.dp))
 
@@ -95,51 +106,29 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
 
                 )
                 Spacer(modifier = Modifier.height(0.dp))
-
                 Column(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(10.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if(uiStateAccount.accounts.isEmpty()) {
-                        Button(onClick = { navController.navigate("SignInComponent") }) {
-                            Text(
-                                text = "Đăng nhập/Đăng ký",
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(start = 7.dp)
-                            )
-                        }
-                    } else if(uiStateAccount.accounts.isNotEmpty()){
-                        LazyColumn(
-                            contentPadding = PaddingValues(12.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally) {
-                            items(uiStateAccount.accounts.size) { index ->
-                                Text(
-                                    text = "${uiStateAccount.accounts[index].firstName} ${uiStateAccount.accounts[index].lastName}",
-                                    fontSize = 22.sp,
-                                    fontWeight = FontWeight.Bold,
-                                )
-                                Text(
-                                    text = uiStateAccount.accounts[index].email,
-                                    fontSize = 18.sp,
+                    Text(
+                        text = "Ngo Van Bao",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
 
-                                    )
-                                Divider(
-                                    modifier = Modifier.padding(vertical = 15.dp),
-                                    color = Color(rgb(211, 211, 211)),
-                                    thickness = 1.dp
-                                )
-                            }
-                        }
-                    }
+                    Text(
+                        text = "baonv.22it@vku.udn.vn",
+                        fontSize = 18.sp,
 
-
-
-
-
+                        )
+                    Divider(
+                        modifier = Modifier.padding(vertical = 15.dp),
+                        color = Color(rgb(211, 211, 211)),
+                        thickness = 1.dp
+                    )
                 }
                 Spacer(modifier = Modifier.height(0.dp))
 
@@ -150,10 +139,14 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        navController.navigate("CardComponent")
+
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.ShoppingCart,
                             contentDescription = "",
+                            tint = colorGreenDark
                         )
                     }
                     Text(
@@ -162,10 +155,15 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(end = 207.dp)
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        navController.navigate("CardComponent")
+
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.KeyboardArrowRight,
-                            contentDescription = ""
+                            contentDescription = "",
+                            tint = colorGreenDark
+
                         )
 
                     }
@@ -182,10 +180,14 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        navController.navigate("")
+
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.Notifications,
                             contentDescription = "",
+                            tint = colorGreenDark
                         )
                     }
                     Text(
@@ -197,7 +199,9 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(
                             imageVector = Icons.Outlined.KeyboardArrowRight,
-                            contentDescription = ""
+                            contentDescription = "",
+                            tint = colorGreenDark
+
                         )
 
                     }
@@ -214,13 +218,18 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        navController.navigate("DeliverTo")
+
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.LocationOn,
                             contentDescription = "",
+                            tint = colorGreenDark
 
 
-                            )
+
+                        )
                     }
                     Text(
                         text = "Address",
@@ -228,12 +237,17 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(end = 207.dp)
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        navController.navigate("DeliverTo")
+
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.KeyboardArrowRight,
                             contentDescription = "",
+                            tint = colorGreenDark
 
-                            )
+
+                        )
 
                     }
 
@@ -249,10 +263,15 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        navController.navigate("EditProfile")
+
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.Person,
                             contentDescription = "",
+                            tint = colorGreenDark
+
                         )
                     }
                     Text(
@@ -261,10 +280,15 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(end = 180.dp)
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        navController.navigate("EditProfile")
+
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.KeyboardArrowRight,
-                            contentDescription = ""
+                            contentDescription = "",
+                            tint = colorGreenDark
+
                         )
 
                     }
@@ -281,8 +305,14 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(painter = painterResource(id = R.drawable.baseline_payment_24), contentDescription = "")
+                    IconButton(onClick = {
+                        navController.navigate("Payment")
+
+                    }) {
+                        Icon(painter = painterResource(id = R.drawable.baseline_payment_24),
+                            contentDescription = "",
+                            tint = colorGreenDark
+                        )
                     }
                     Text(
                         text = "Payment",
@@ -290,10 +320,15 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(end = 202.dp)
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        navController.navigate("Payment")
+
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.KeyboardArrowRight,
-                            contentDescription = ""
+                            contentDescription = "",
+                            tint = colorGreenDark
+
                         )
 
                     }
@@ -310,8 +345,14 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(painter = painterResource(id = R.drawable.baseline_security_24), contentDescription = "")
+                    IconButton(onClick = {
+                        navController.navigate("Security")
+
+                    }) {
+                        Icon(painter = painterResource(id = R.drawable.baseline_security_24),
+                            contentDescription = "",
+                            tint = colorGreenDark
+                        )
                     }
                     Text(
                         text = "Security",
@@ -319,10 +360,15 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(end = 208.dp)
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        navController.navigate("Security")
+
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.KeyboardArrowRight,
-                            contentDescription = ""
+                            contentDescription = "",
+                            tint = colorGreenDark
+
                         )
 
                     }
@@ -339,8 +385,14 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(painter = painterResource(id = R.drawable.baseline_language_24), contentDescription = "")
+                    IconButton(onClick = {
+                        navController.navigate("Language")
+
+                    }) {
+                        Icon(painter = painterResource(id = R.drawable.baseline_language_24),
+                            contentDescription = "",
+                            tint = colorGreenDark
+                        )
                     }
                     Text(
                         text = "Language",
@@ -348,16 +400,24 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(end = 193.dp)
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        navController.navigate("Language")
+
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.KeyboardArrowRight,
-                            contentDescription = ""
+                            contentDescription = "",
+                            tint = colorGreenDark
+
                         )
 
                     }
 
 
                 }
+
+
+
             }
 
 
@@ -365,3 +425,10 @@ fun Profile(navController: NavController, uiStateAccount: SignInScreenUiState,) 
     }
 }
 
+@Composable
+@Preview(showBackground = true)
+fun DemoProfile(){
+    Surface {
+        Profile(navController = NavController(LocalContext.current), uiStateAccount = SignInScreenUiState())
+    }
+}

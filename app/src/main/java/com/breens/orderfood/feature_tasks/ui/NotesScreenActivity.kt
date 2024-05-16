@@ -74,17 +74,22 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Surface
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
 import com.breens.orderfood.feature_tasks.events.CardsScreenUiEvent
 import com.breens.orderfood.feature_tasks.events.ChatScreenUiEvent
 import com.breens.orderfood.feature_tasks.events.SignInScreenUiEvent
 import com.breens.orderfood.feature_tasks.side_effects.SignInScreenSideEffects
 import com.breens.orderfood.feature_tasks.ui.components.Card2Component
 import com.breens.orderfood.feature_tasks.ui.components.ChatComponent
+import com.breens.orderfood.feature_tasks.ui.components.EditProfile
 import com.breens.orderfood.feature_tasks.ui.components.FavoriteFoodComponent
 import com.breens.orderfood.feature_tasks.ui.components.Profile
 import com.breens.orderfood.feature_tasks.ui.components.SignInComponent
 import com.breens.orderfood.feature_tasks.ui.components.SignUpComponent
 import com.breens.orderfood.feature_tasks.ui.components.TabOrderComponent
+import com.breens.orderfood.feature_tasks.ui.components.WelcomeAppFood
 import com.breens.orderfood.feature_tasks.viewmodel.AccountViewModel
 import com.breens.orderfood.feature_tasks.viewmodel.CardsViewModel
 import com.breens.orderfood.feature_tasks.viewmodel.ChatViewModel
@@ -106,7 +111,7 @@ class NotesScreenActivity : ComponentActivity() {
                         .background(Color.Gray)
                 ) {
 
-                    FoodScreenActivity()
+                    WelcomeAppFood(navController = NavHostController(LocalContext.current))
                 }
 
 
@@ -146,6 +151,7 @@ fun FoodScreenActivity() {
     val uiStateAccount = accountViewModel.stateAccount.collectAsState().value
     val uiStateCard = cardsViewModel.state.collectAsState().value
     val uiStateMessage = chatViewModel.stateMessage.collectAsState().value
+
 
 
     val tabItems = listOf(
@@ -954,6 +960,20 @@ fun FoodScreenActivity() {
                             )
                         }
 
+                        composable("EditProfile") {
+
+                            EditProfile(
+                                navController = navController,
+                            )
+                        }
+
+                        composable("WelcomeAppFood") {
+
+                            WelcomeAppFood(
+                                navController = navController,
+                            )
+                        }
+
 
                     }
                 }
@@ -999,6 +1019,13 @@ fun FoodScreenActivity() {
             }
         }
 
+    }
+}
+@Composable
+@Preview()
+fun Demo(){
+    Surface {
+        
     }
 }
 
