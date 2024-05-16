@@ -1,6 +1,7 @@
 package com.breens.orderfood.data.model
 
 import androidx.compose.ui.graphics.vector.ImageVector
+import org.intellij.lang.annotations.Language
 
 data class Task(
     val taskId: String = "",
@@ -71,4 +72,21 @@ data class Chat(
     val message: String =" ",
     val direction: Boolean = false,
     val createdAt: String = "",
+)
+data class UserProfile(
+    val id: String? = "",
+    val fullName: String = "",
+    val gender: Int = 1,
+    val email: String = "",
+    val phoneNumber: String = "",
+    val location: String = "",
+    val dateOfBirth: Long = System.currentTimeMillis(),
+    val avatar: String = "",
+    val resume: String = "",
+    var password: String = "",
+    var about: String = "",
+    var createdAt: Long = System.currentTimeMillis(),
+    var emailVerifyToken: String = "",
+    var forgotPasswordToken: String = "",
+    var languages: List<Language> = emptyList(),
 )

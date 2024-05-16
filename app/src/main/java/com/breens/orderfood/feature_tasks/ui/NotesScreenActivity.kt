@@ -80,6 +80,7 @@ import com.breens.orderfood.feature_tasks.events.SignInScreenUiEvent
 import com.breens.orderfood.feature_tasks.side_effects.SignInScreenSideEffects
 import com.breens.orderfood.feature_tasks.ui.components.Card2Component
 import com.breens.orderfood.feature_tasks.ui.components.ChatComponent
+import com.breens.orderfood.feature_tasks.ui.components.EditProfile
 import com.breens.orderfood.feature_tasks.ui.components.FavoriteFoodComponent
 import com.breens.orderfood.feature_tasks.ui.components.Profile
 import com.breens.orderfood.feature_tasks.ui.components.SignInComponent
@@ -951,6 +952,13 @@ fun FoodScreenActivity() {
                             UpdateDiscountComponent(
                                 navController = navController,
                                 uiState = uiState
+                            )
+                        }
+
+                        composable("EditProfile") {
+
+                            EditProfile(
+                                navController = navController,
                             )
                         }
 
