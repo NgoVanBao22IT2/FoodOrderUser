@@ -1,21 +1,22 @@
 {
   "project_info": {
-    "project_number": "598276076900",
-    "project_id": "tesst-c995b",
-    "storage_bucket": "tesst-c995b.appspot.com"
+    "project_number": "460952580718",
+    "firebase_url": "https://foodorderappuser-default-rtdb.firebaseio.com",
+    "project_id": "foodorderappuser",
+    "storage_bucket": "foodorderappuser.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:598276076900:android:05bf5943df404bfb0bf671",
+        "mobilesdk_app_id": "1:460952580718:android:9c32d899c2c2a0e6446c7f",
         "android_client_info": {
-          "package_name": "com.breens.foodadminapp"
+          "package_name": "com.breens.orderfoodapp"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAKL8sE-F_gDzQT1PBLZMeRyu-d-R8VF7w"
+          "current_key": "AIzaSyBMsW6Vw-Ch6o3LZt1hueU7T0aRifgRvuk"
         }
       ],
       "services": {
@@ -26,34 +27,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:598276076900:android:2a13ce4978e03b720bf671",
+        "mobilesdk_app_id": "1:460952580718:android:eb887574b8f57086446c7f",
         "android_client_info": {
-          "package_name": "com.breens.orderfood"
+          "package_name": "com.breens.orderfoodappadmin"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAKL8sE-F_gDzQT1PBLZMeRyu-d-R8VF7w"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:598276076900:android:46434d9f177b474f0bf671",
-        "android_client_info": {
-          "package_name": "com.breens.todochamp"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAKL8sE-F_gDzQT1PBLZMeRyu-d-R8VF7w"
+          "current_key": "AIzaSyBMsW6Vw-Ch6o3LZt1hueU7T0aRifgRvuk"
         }
       ],
       "services": {

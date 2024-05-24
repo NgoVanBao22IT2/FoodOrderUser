@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.breens.orderfood"
+    namespace = "com.breens.orderfoodapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.breens.orderfood"
+        applicationId = "com.breens.orderfoodapp"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -75,6 +75,8 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore:25.0.0")
     implementation("com.google.firebase:firebase-storage:21.0.0")
     implementation("com.google.firebase:firebase-database-ktx:21.0.0")
+    implementation("androidx.datastore:datastore-core-android:1.1.1")
+    implementation("androidx.datastore:datastore-preferences-core-jvm:1.1.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
